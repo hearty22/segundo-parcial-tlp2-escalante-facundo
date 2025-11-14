@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 
 export const Navbar = () => {
+  const navigate = useNavigate();
   const [user, setUser] = useState()
   // TODO: Obtener datos del usuario desde /api/profile
   useEffect(()=>{
@@ -11,7 +13,10 @@ export const Navbar = () => {
         )
         const dataProfile = await res.json();
         if(res.ok){
-          console.log("nada");
+         setUser(dataProfile.user.name)
+        }
+        else{
+          setUser("anonimo")
         }
       } catch (error) {
         console.log(error);
@@ -21,10 +26,28 @@ export const Navbar = () => {
   
   },[])
   // TODO: Implementar función handleLogout con POST a /api/logout usando credentials: 'include'
-  // TODO: Después del logout exitoso, redireccionar a /login
-  // TODO: Manejar errores apropiadamente
+  const handleLogout = async (e) =>{
+    e.preventDefault();
+    try {
+      const res = await fetch("http://localhost:3000/api/logout",
+        {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          credentials: "include"
+        }
+      )
+      // TODO: Manejar errores apropiadamente
+      if(res.ok){
+        // TODO: Después del logout exitoso, redireccionar a /login
+        navigate("/login")
+      }
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
-  const userName = "Usuario"; // TODO: Reemplazar con el nombre real del usuario obtenido de /api/profile
+  const userName = user; // TODO: Reemplazar con el nombre real del usuario obtenido de /api/profile
 
   return (
     <nav className="bg-gray-900 text-white h-16 left-0 right-0 shadow-lg sticky top-0 z-50">
@@ -38,8 +61,9 @@ export const Navbar = () => {
           </span>
 
           <button
-            onClick={() => {
+            onClick={(e) => {
               // TODO: Implementar handleLogout aquí
+              handleLogout(e)
             }}
             className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded transition-colors font-medium"
           >
