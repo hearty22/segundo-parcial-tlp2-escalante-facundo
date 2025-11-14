@@ -1,9 +1,59 @@
 import { Link } from "react-router";
-
+import { useForm } from "../hooks/useForm";
+import { useState } from "react";
+import { useNavigate } from "react-router";
 export const RegisterPage = () => {
-  // TODO: Integrar lógica de registro aquí
+  const [messageError, setMessageError] = useState(null)
+  const [messsageOk, setMessageOk] = useState(null)
+  const navigate = useNavigate();
+
+  // TODO: Integrar lógica de registro aqui
+  const register = async () =>{
+    try {
+      const res = await fetch("http://localhost:3000/api/register",{
+        method: "POST",
+        credentials: "include",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          username: formState.username,
+          email: formState.email,
+          password: formState.password,
+          name: formState.name,
+          lastname: formState.lastname
+        })
+      }
+      );
+      const data = await res.json();
+      if((res.ok) || (data.message)){
+
+        console.log("registro exitoso");
+        setMessageOk("register exitoso")
+        setTimeout(() => {
+          navigate("/login")
+        }, 2000);
+      }else{
+        setMessageError("campos invalidos")
+      }
+
+    } catch (error) {
+      console.log("error: ", error);
+    }
+  }
   // TODO: Implementar useForm para el manejo del formulario
+  const {handleChange, handleReset, formState} = useForm({
+    username: "",
+    email: "",
+    password : "",
+    name : "",
+    lastname: ""
+  });
+
   // TODO: Implementar función handleSubmit
+  const handleSubmit = (e) =>{
+    e.preventDefault();
+    register();
+    handleReset();
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 py-8">
@@ -13,13 +63,16 @@ export const RegisterPage = () => {
         </h2>
 
         {/* TODO: Mostrar este div cuando haya error */}
-        <div className="hidden bg-red-100 text-red-700 p-3 rounded mb-4">
+        <div className={`${!messageError && !messsageOk ? "hidden" : ""} ${messageError ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"}  p-3 rounded mb-4`}>
           <p className="text-sm">
-            Error al crear la cuenta. Intenta nuevamente.
+            {messageError}
+            {messsageOk}
           </p>
         </div>
 
-        <form onSubmit={(event) => {}}>
+        <form onSubmit={(e) => {
+          handleSubmit(e)
+        }}>
           <div className="mb-4">
             <label
               htmlFor="username"
@@ -31,6 +84,8 @@ export const RegisterPage = () => {
               type="text"
               id="username"
               name="username"
+              value={formState.username}
+              onChange={handleChange}
               placeholder="Elige un nombre de usuario"
               className="w-full border border-gray-300 rounded p-3 focus:outline-none focus:ring-2 focus:ring-green-500"
               required
@@ -48,6 +103,8 @@ export const RegisterPage = () => {
               type="email"
               id="email"
               name="email"
+              value={formState.email}
+              onChange={handleChange}
               placeholder="tu@email.com"
               className="w-full border border-gray-300 rounded p-3 focus:outline-none focus:ring-2 focus:ring-green-500"
               required
@@ -64,6 +121,8 @@ export const RegisterPage = () => {
             <input
               type="password"
               id="password"
+              value={formState.password}
+              onChange={handleChange}
               name="password"
               placeholder="Crea una contraseña segura"
               className="w-full border border-gray-300 rounded p-3 focus:outline-none focus:ring-2 focus:ring-green-500"
@@ -81,6 +140,8 @@ export const RegisterPage = () => {
             <input
               type="text"
               id="name"
+              value={formState.name}
+              onChange={handleChange}
               name="name"
               placeholder="Tu nombre"
               className="w-full border border-gray-300 rounded p-3 focus:outline-none focus:ring-2 focus:ring-green-500"
@@ -98,6 +159,8 @@ export const RegisterPage = () => {
             <input
               type="text"
               id="lastname"
+              value={formState.lastname}
+              onChange={handleChange}
               name="lastname"
               placeholder="Tu apellido"
               className="w-full border border-gray-300 rounded p-3 focus:outline-none focus:ring-2 focus:ring-green-500"
