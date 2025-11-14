@@ -37,8 +37,8 @@ export const Navbar = () => {
         }
       )
       // TODO: Manejar errores apropiadamente
+      // TODO: Después del logout exitoso, redireccionar a /login
       if(res.ok){
-        // TODO: Después del logout exitoso, redireccionar a /login
         navigate("/login")
       }
       console.log(res);

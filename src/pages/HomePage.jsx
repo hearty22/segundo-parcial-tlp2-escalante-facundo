@@ -1,48 +1,85 @@
+import { useEffect, useState } from "react";
+import { Loading } from "../components/Loading";
+
 export const HomePage = () => {
+  const [isLoading, setIsloading] = useState(false)
+  const [superheroes, setSuperheroes] = useState([])
   // TODO: Integrar lógica para obtener superhéroes desde la API
+  const getHeroes = async () =>{
+    try {
+      setIsloading(true)
+      const res = await fetch("http://localhost:3000/api/superheroes",
+        {
+          method: "GET",
+          credentials: "include"
+        }
+      );
+      const data = await res.json();
+      if(res.ok){
+        console.log(data.data);
+        setSuperheroes(data.data)
+      }
+    } catch (error) {
+      console.log(error);
+    }finally{
+      setIsloading(false)
+    }
+
+  }
+ const handleSubmit = (e) =>{
+    e.preventDefault();
+    getHeroes();
+ }
+ useEffect(()=>{
+  getHeroes();
+ },[])
   // TODO: Implementar useState para almacenar la lista de superhéroes
   // TODO: Implementar función para recargar superhéroes
 
   // Datos de ejemplo para las cards
-  const superheroes = [
-    {
-      id: 1,
-      superhero: "Superman",
-      image:
-        "https://cdn.jsdelivr.net/gh/akabab/superhero-api@0.3.0/api/images/lg/644-superman.jpg",
-    },
-    {
-      id: 2,
-      superhero: "Batman",
-      image:
-        "https://cdn.jsdelivr.net/gh/akabab/superhero-api@0.3.0/api/images/lg/70-batman.jpg",
-    },
-    {
-      id: 3,
-      superhero: "Wonder Woman",
-      image:
-        "https://cdn.jsdelivr.net/gh/akabab/superhero-api@0.3.0/api/images/lg/720-wonder-woman.jpg",
-    },
-    {
-      id: 4,
-      superhero: "Spider-Man",
-      image:
-        "https://cdn.jsdelivr.net/gh/akabab/superhero-api@0.3.0/api/images/lg/620-spider-man.jpg",
-    },
-    {
-      id: 5,
-      superhero: "Iron Man",
-      image:
-        "https://cdn.jsdelivr.net/gh/akabab/superhero-api@0.3.0/api/images/lg/346-iron-man.jpg",
-    },
-    {
-      id: 6,
-      superhero: "Captain America",
-      image:
-        "https://cdn.jsdelivr.net/gh/akabab/superhero-api@0.3.0/api/images/lg/149-captain-america.jpg",
-    },
-  ];
-
+  // const superheroes = [
+  //   {
+  //     id: 1,
+  //     superhero: "Superman",
+  //     image:
+  //       "https://cdn.jsdelivr.net/gh/akabab/superhero-api@0.3.0/api/images/lg/644-superman.jpg",
+  //   },
+  //   {
+  //     id: 2,
+  //     superhero: "Batman",
+  //     image:
+  //       "https://cdn.jsdelivr.net/gh/akabab/superhero-api@0.3.0/api/images/lg/70-batman.jpg",
+  //   },
+  //   {
+  //     id: 3,
+  //     superhero: "Wonder Woman",
+  //     image:
+  //       "https://cdn.jsdelivr.net/gh/akabab/superhero-api@0.3.0/api/images/lg/720-wonder-woman.jpg",
+  //   },
+  //   {
+  //     id: 4,
+  //     superhero: "Spider-Man",
+  //     image:
+  //       "https://cdn.jsdelivr.net/gh/akabab/superhero-api@0.3.0/api/images/lg/620-spider-man.jpg",
+  //   },
+  //   {
+  //     id: 5,
+  //     superhero: "Iron Man",
+  //     image:
+  //       "https://cdn.jsdelivr.net/gh/akabab/superhero-api@0.3.0/api/images/lg/346-iron-man.jpg",
+  //   },
+  //   {
+  //     id: 6,
+  //     superhero: "Captain America",
+  //     image:
+  //       "https://cdn.jsdelivr.net/gh/akabab/superhero-api@0.3.0/api/images/lg/149-captain-america.jpg",
+  //   },
+  // ];
+  if(isLoading){
+    return(
+      <Loading/>
+    )
+  }
   return (
     <div className="container mx-auto px-4 pb-8">
       <h1 className="text-4xl font-bold text-center mt-8 mb-4 text-gray-800">
@@ -51,8 +88,9 @@ export const HomePage = () => {
 
       <div className="flex justify-center mb-8">
         <button
-          onClick={() => {
+          onClick={(e) => {
             // TODO: Implementar función para recargar superhéroes
+            handleSubmit(e)
           }}
           className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded transition-colors"
         >
