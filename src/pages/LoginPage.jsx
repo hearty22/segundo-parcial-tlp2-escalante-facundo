@@ -1,9 +1,49 @@
+import { useEffect, useEffectEvent, useState } from "react";
 import { Link } from "react-router";
-
+import { useForm } from "../hooks/useForm";
+import { useNavigate } from "react-router";
 export const LoginPage = () => {
+  const navigate = useNavigate();
+  const [messageError, setMessageError] = useState(null)
+
   // TODO: Integrar lógica de autenticación aquí
+  const Login = async  () =>{
+    // e.preventDefault();
+    try {
+      const res = await fetch("http://localhost:3000/api/login",{
+        method: "POST",
+        credentials: "include",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          username: formState.username,
+          password: formState.password
+        })
+      })
+      const data = await res.json();
+      console.log(res);
+      if(res.ok){
+        handleReset();
+        navigate("/home")
+        console.log(data);
+      }else{
+        setMessageError("credenciales invalidas")
+        console.log("credenciales invalidas");
+        handleReset();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
   // TODO: Implementar useForm para el manejo del formulario
+  const {handleChange, handleReset, formState} = useForm({
+    username: "",
+    password: ""
+  })
   // TODO: Implementar función handleSubmit
+  const handleSubmit = (e) =>{
+    e.preventDefault();
+    Login()
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 py-8">
@@ -14,13 +54,13 @@ export const LoginPage = () => {
         </h2>
 
         {/* TODO: Mostrar este div cuando haya error */}
-        <div className="hidden bg-red-100 text-red-700 p-3 rounded mb-4">
+        <div className={` bg-red-100 text-red-700 p-3 rounded mb-4 ${!messageError ? "hidden" : ""}`}>
           <p className="text-sm">
-            Credenciales incorrectas. Intenta nuevamente.
+            {messageError}
           </p>
         </div>
 
-        <form onSubmit={(event) => {}}>
+        <form onSubmit={(e) => {handleSubmit(e)}}>
           <div className="mb-4">
             <label
               htmlFor="username"
@@ -32,6 +72,8 @@ export const LoginPage = () => {
               type="text"
               id="username"
               name="username"
+              value={formState.username}
+              onChange={handleChange}
               placeholder="Ingresa tu usuario"
               className="w-full border border-gray-300 rounded p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
@@ -48,6 +90,8 @@ export const LoginPage = () => {
             <input
               type="password"
               id="password"
+              value={formState.password}
+              onChange={handleChange}
               name="password"
               placeholder="Ingresa tu contraseña"
               className="w-full border border-gray-300 rounded p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"

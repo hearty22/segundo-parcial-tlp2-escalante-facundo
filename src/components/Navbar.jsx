@@ -1,5 +1,25 @@
+import { useEffect } from "react";
+
 export const Navbar = () => {
   // TODO: Obtener datos del usuario desde /api/profile
+  useEffect(()=>{
+    const getProfile  = async () =>{
+      try {
+        const res = await fetch("http://localhost:3000/api/profile",
+          {credentials: "include"}
+        )
+        const dataProfile = await res.json();
+        if(res.ok){
+          console.log("exito");
+          console.log(dataProfile);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    getProfile();
+  
+  },[])
   // TODO: Implementar función handleLogout con POST a /api/logout usando credentials: 'include'
   // TODO: Después del logout exitoso, redireccionar a /login
   // TODO: Manejar errores apropiadamente
