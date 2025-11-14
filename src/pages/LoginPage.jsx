@@ -2,7 +2,9 @@ import { useState } from "react";
 import { Link } from "react-router";
 import { useForm } from "../hooks/useForm";
 import { useNavigate } from "react-router";
+import { Loading } from "../components/Loading";
 export const LoginPage = () => {
+  const [isloading, setIsloading] = useState(false)
   const navigate = useNavigate();
   const [messageError, setMessageError] = useState(null)
 
@@ -10,6 +12,7 @@ export const LoginPage = () => {
   const Login = async  () =>{
     // e.preventDefault();
     try {
+      setIsloading(true)
       const res = await fetch("http://localhost:3000/api/login",{
         method: "POST",
         credentials: "include",
@@ -32,6 +35,8 @@ export const LoginPage = () => {
       }
     } catch (error) {
       console.log(error);
+    }finally{
+      setIsloading(false)
     }
   }
   // TODO: Implementar useForm para el manejo del formulario
@@ -43,6 +48,12 @@ export const LoginPage = () => {
   const handleSubmit = (e) =>{
     e.preventDefault();
     Login()
+  }
+
+  if(isloading){
+    return(
+      <Loading/>
+    )
   }
 
   return (

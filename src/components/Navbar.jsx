@@ -1,6 +1,7 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export const Navbar = () => {
+  const [user, setUser] = useState()
   // TODO: Obtener datos del usuario desde /api/profile
   useEffect(()=>{
     const getProfile  = async () =>{
@@ -10,8 +11,7 @@ export const Navbar = () => {
         )
         const dataProfile = await res.json();
         if(res.ok){
-          console.log("exito");
-          console.log(dataProfile);
+          console.log("nada");
         }
       } catch (error) {
         console.log(error);

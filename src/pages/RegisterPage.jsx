@@ -2,7 +2,9 @@ import { Link } from "react-router";
 import { useForm } from "../hooks/useForm";
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import { Loading } from "../components/Loading";
 export const RegisterPage = () => {
+  const [isloading, setIsloading] = useState(false)
   const [messageError, setMessageError] = useState(null)
   const [messsageOk, setMessageOk] = useState(null)
   const navigate = useNavigate();
@@ -10,6 +12,7 @@ export const RegisterPage = () => {
   // TODO: Integrar lógica de registro aqui
   const register = async () =>{
     try {
+      setIsloading(true)
       const res = await fetch("http://localhost:3000/api/register",{
         method: "POST",
         credentials: "include",
@@ -37,7 +40,9 @@ export const RegisterPage = () => {
 
     } catch (error) {
       console.log("error: ", error);
-    }
+    }finally{
+        setIsloading(false)
+      }
   }
   // TODO: Implementar useForm para el manejo del formulario
   const {handleChange, handleReset, formState} = useForm({
@@ -53,6 +58,12 @@ export const RegisterPage = () => {
     e.preventDefault();
     register();
     handleReset();
+  }
+
+  if (isloading) {
+    return(
+      <Loading/>
+    )
   }
 
   return (
